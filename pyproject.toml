@@ -1,0 +1,22 @@
+[project]
+name = "projekat1"
+version = "0.1.0"
+description = "prvi projekat, skriptu koja ce da ingestuje postove sa ovog apija i ubaci ih u localhost mongodb, u neku kolekciju, znaci to je some single run scripta  nebitno kakva. A onda napravis API aplikaciju koja podrzava ceo CRUD sa postovima, naravno primeni sve ovo sto smo do sada radili."
+authors = [
+    {name = "Your Name",email = "you@example.com"}
+]
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic (>=2.12.5,<3.0.0)",
+    "aiohttp (>=3.13.3,<4.0.0)",
+    "asyncio (>=4.0.0,<5.0.0)",
+    "fastapi (>=0.128.0,<0.129.0)",
+    "pydantic-settings (>=2.12.0,<3.0.0)",
+    "pymongo (>=4.16.0,<5.0.0)",
+    "uvicorn (>=0.40.0,<0.41.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
