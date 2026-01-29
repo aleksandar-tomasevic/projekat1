@@ -12,13 +12,13 @@ class Settings(BaseSettings):
     COLLECTION_NAME: str 
 
 class Post(BaseModel):
-    userId: int
+    user_id: int
     id: int
     title: str
     body: str
 
 class PostPatch(BaseModel):
-    userId: int | None = None
+    user_id: int | None = None
     id: int | None = None
     title: str | None = None
     body: str | None = None
@@ -39,10 +39,10 @@ db = client[settings.DB_NAME]
 collection = db[settings.COLLECTION_NAME]
 
 @app.get("/posts")
-def get_posts(userId: int = None,title:str=None):
+def get_posts(user_id: int = None,title:str=None):
     query = {}
-    if userId is not None:
-        query["userId"] = userId
+    if user_id is not None:
+        query["user_id"] = user_id
     if title is not None:
         query["title"] = title
 
@@ -56,36 +56,36 @@ def get_post(obj_id: str):
         post["_id"] = str(post["_id"])
         return post
     else:
-        return {"message": "Post nije pronadjen"}, 404
+        return {"message": "Post not found."}, 404
 
 @app.post("/posts")
 def create_post(post: Post):
     result = collection.insert_one(post.model_dump())
-    return {"message": "Post je uspjesno kreiran"} 
+    return {"message": "Post created sucessfully"} 
 
 @app.delete("/posts/{obj_id}")
 def delete_post(obj_id: str):
     result = collection.delete_one({"_id": ObjectId(obj_id)})
     if result.deleted_count == 1:
-        return {"message": "Post je uspjesno obrisan"}
+        return {"message": "Post deleted successfully"}
     else:
-        return {"message": "Post nije pronadjen"}, 404
+        return {"message": "Post not found."}, 404
     
 @app.put("/posts/{obj_id}")
 def update_post(obj_id: str, post: Post):
     post = collection.find_one({"_id": ObjectId(obj_id)}, {"_id": 0})
     if result.matched_count == 1:
         collection.update_one({"_id": ObjectId(obj_id)}, {"$set": post.model_dump()})
-        return {"message": "Post je uspjesno azuriran"}
+        return {"message": "Post updated successfully"}
     else:
-        return {"message": "Post nije pronadjen"}, 404
+        return {"message": "Post not found."}, 404
 
 @app.patch("/posts/{obj_id}")
 def patch_post(obj_id: str, post: PostPatch):
     result = collection.update_one({"_id": ObjectId(obj_id)}, {"$set": post.model_dump(exclude_unset=True)})
     if result.matched_count == 1:
-        return {"message": "Post je uspjesno zakrpljen ;)"}
+        return {"message": "Post patched successfully"}
     else:
-        return {"message": "Post nije pronadjen"}, 404
+        return {"message": "Post not found."}, 404
 
     

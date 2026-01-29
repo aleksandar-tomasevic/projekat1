@@ -4,21 +4,21 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import BaseModel, ValidationError, HttpUrl
 from pymongo import MongoClient, UpdateOne
 
-MONGO_URI = "mongodb://localhost:27018"
-DB_NAME = "test_db"
-
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', extra='ignore')    
-    BASE_URL: HttpUrl
+    MONGO_URI: AnyUrl
+    DB_NAME: str 
+    COLLECTION_NAME: str 
 
 class Post(BaseModel):
     userId: int
     id: int
     title: str
     body: str
-url = f"{Settings().BASE_URL}/posts"
+url = f"{settings.BASE_URL}/posts"
 
+settings = Settings()
 
 async def fetch_posts():
     async with aiohttp.ClientSession() as session:
@@ -37,9 +37,9 @@ async def fetch_posts():
     return valid
 
 def main():
-    client = MongoClient(MONGO_URI)
-    db = client[DB_NAME]
-    collection = db["posts"]
+    client = MongoClient(settings.MONGO_URI)
+    db = client[settings.DB_NAME]
+    collection = db[settings.COLLECTION_NAME]
 
     posts = asyncio.run(fetch_posts())
 
