@@ -16,6 +16,10 @@ dependencies = [
     "uvicorn (>=0.40.0,<0.41.0)"
 ]
 
+[tool.poetry]
+name = "projekat1"
+packages = [{ include = "projekat1", from = "src" }]
+
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
