@@ -3,433 +3,877 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Posts API Frontend</title>
+    <title>Posts</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg0: #f7f6f3;
+            --bg1: #efece6;
+            --panel: #ffffff;
+            --text: #141414;
+            --muted: rgba(20, 20, 20, 0.62);
+            --border: rgba(20, 20, 20, 0.12);
+            --shadow: 0 12px 34px rgba(0, 0, 0, 0.08);
+            --accent: #0f766e;
+            --accent-ink: #064e46;
+            --danger: #b42318;
+            --danger-ink: #7a271a;
+            --radius: 14px;
+            --radius-sm: 10px;
+            --focus: 0 0 0 4px rgba(15, 118, 110, 0.18);
         }
-        
+
+        * { box-sizing: border-box; }
+
+        html, body { height: 100%; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            margin: 0;
+            color: var(--text);
+            font-family: "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+            background:
+                radial-gradient(900px 700px at 12% 10%, rgba(15, 118, 110, 0.15), transparent 60%),
+                radial-gradient(820px 560px at 88% 38%, rgba(20, 20, 20, 0.10), transparent 56%),
+                linear-gradient(180deg, var(--bg0), var(--bg1));
+            padding: 28px;
         }
-        
-        .container {
-            max-width: 1000px;
+
+        .app {
+            max-width: 1100px;
             margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            overflow: hidden;
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: var(--shadow);
+            border-radius: var(--radius);
+            backdrop-filter: blur(10px);
+            overflow: clip;
         }
-        
+
         header {
-            background: #333;
-            color: white;
-            padding: 20px;
-            text-align: center;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 22px 22px 16px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.65);
         }
-        
-        header h1 {
-            font-size: 28px;
+
+        .brand h1 {
+            margin: 0;
+            font-size: 26px;
+            letter-spacing: -0.02em;
         }
-        
-        .content {
+
+        .brand p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        main {
+            padding: 18px 18px 22px;
+        }
+
+        .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            padding: 20px;
+            gap: 14px;
         }
-        
-        .section {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
+
+        .panel {
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
         }
-        
-        .section h2 {
-            margin-bottom: 15px;
-            color: #333;
-            font-size: 18px;
-        }
-        
-        .form-group {
-            margin-bottom: 12px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: 500;
-        }
-        
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-family: inherit;
-            font-size: 14px;
-        }
-        
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-        }
-        
-        button {
-            background: #667eea;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: background 0.3s;
-            width: 100%;
-        }
-        
-        button:hover {
-            background: #764ba2;
-        }
-        
-        button.delete {
-            background: #e74c3c;
-            padding: 8px 15px;
-            width: auto;
-            margin-top: 10px;
-        }
-        
-        button.delete:hover {
-            background: #c0392b;
-        }
-        
-        button.update {
-            background: #3498db;
-            padding: 8px 15px;
-            width: auto;
-            margin-right: 5px;
-        }
-        
-        button.update:hover {
-            background: #2980b9;
-        }
-        
-        .posts-list {
+
+        .panel--wide {
             grid-column: 1 / -1;
         }
-        
-        .post-item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            border-left: 4px solid #667eea;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+        .panel h2 {
+            margin: 0 0 12px;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(20, 20, 20, 0.78);
         }
-        
-        .post-item h3 {
-            margin: 0 0 10px 0;
-            color: #333;
-            font-size: 16px;
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
         }
-        
-        .post-meta {
+
+        .row--2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        label {
+            display: block;
+            margin: 0 0 6px;
             font-size: 12px;
-            color: #999;
-            margin-bottom: 10px;
+            color: var(--muted);
         }
-        
-        .post-body {
-            color: #555;
-            margin-bottom: 10px;
-            line-height: 1.4;
+
+        input, textarea {
+            width: 100%;
+            padding: 10px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(20, 20, 20, 0.16);
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text);
+            font: inherit;
             font-size: 14px;
         }
-        
-        .post-actions {
+
+        textarea {
+            min-height: 92px;
+            resize: vertical;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            box-shadow: var(--focus);
+            border-color: rgba(15, 118, 110, 0.55);
+        }
+
+        .btn {
+            appearance: none;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            padding: 10px 14px;
+            font: inherit;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+            user-select: none;
+            line-height: 1;
+        }
+
+        .btn:active { transform: translateY(1px); }
+
+        .btn--primary {
+            background: var(--accent);
+            border-color: rgba(15, 118, 110, 0.25);
+            color: #fff;
+        }
+
+        .btn--primary:hover { background: #0b5e57; }
+
+        .btn--ghost {
+            background: rgba(255, 255, 255, 0.7);
+            border-color: rgba(20, 20, 20, 0.18);
+            color: rgba(20, 20, 20, 0.86);
+        }
+
+        .btn--ghost:hover { border-color: rgba(20, 20, 20, 0.28); }
+
+        .btn--danger {
+            background: rgba(180, 35, 24, 0.10);
+            border-color: rgba(180, 35, 24, 0.22);
+            color: var(--danger-ink);
+        }
+
+        .btn--danger:hover {
+            background: rgba(180, 35, 24, 0.14);
+            border-color: rgba(180, 35, 24, 0.30);
+        }
+
+        .btn--block { width: 100%; justify-content: center; }
+
+        .panel-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .panel-actions .btn { flex: 1; }
+
+        .list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .skeleton {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.65);
+            color: var(--muted);
+        }
+
+        .post {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.86);
+            animation: rise 240ms ease both;
+        }
+
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .post__head {
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .post__title {
+            margin: 0;
+            font-size: 16px;
+            letter-spacing: -0.01em;
+        }
+
+        .post__meta {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            max-width: 55%;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(20, 20, 20, 0.14);
+            background: rgba(255, 255, 255, 0.65);
+            color: rgba(20, 20, 20, 0.72);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-size: 12px;
+        }
+
+        .pill--click {
+            cursor: pointer;
+            transition: background 120ms ease, border-color 120ms ease;
+        }
+
+        .pill--click:hover {
+            background: rgba(15, 118, 110, 0.09);
+            border-color: rgba(15, 118, 110, 0.25);
+        }
+
+        .post__body {
+            margin: 10px 0 12px;
+            color: rgba(20, 20, 20, 0.80);
+            line-height: 1.45;
+            white-space: pre-line;
+            font-size: 14px;
+        }
+
+        .post__actions {
             display: flex;
             gap: 10px;
         }
-        
-        .filter-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+
+        .post__actions .btn { padding: 9px 12px; }
+
+        .muted { color: var(--muted); }
+
+        .bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
-        
-        .filter-group input {
-            grid-column: 1 / -1;
+
+        .count {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-size: 12px;
+            color: rgba(20, 20, 20, 0.62);
         }
-        
-        .filter-group button {
-            background: #27ae60;
-        }
-        
-        .filter-group button:hover {
-            background: #229954;
-        }
-        
-        .filter-group button.clear {
-            background: #95a5a6;
-        }
-        
-        .filter-group button.clear:hover {
-            background: #7f8c8d;
-        }
-        
-        .message {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 18px;
+            transform: translateX(-50%);
+            padding: 10px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
             display: none;
+            max-width: min(680px, calc(100vw - 32px));
+            font-size: 14px;
         }
-        
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
+
+        .toast.is-open { display: block; animation: rise 180ms ease both; }
+        .toast.is-error { border-color: rgba(180, 35, 24, 0.25); background: rgba(255, 245, 245, 0.92); color: #7a271a; }
+        .toast.is-success { border-color: rgba(15, 118, 110, 0.25); background: rgba(240, 253, 250, 0.92); color: #064e46; }
+
+        dialog {
+            border: 1px solid rgba(20, 20, 20, 0.18);
+            border-radius: 16px;
+            padding: 0;
+            width: min(740px, calc(100vw - 28px));
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.18);
         }
-        
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
+
+        dialog::backdrop {
+            background: rgba(15, 23, 42, 0.35);
+            backdrop-filter: blur(3px);
         }
-        
-        .loading {
-            text-align: center;
-            color: #667eea;
-            font-weight: 600;
+
+        .dialog-head {
+            padding: 16px 16px 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
         }
-        
-        @media (max-width: 768px) {
-            .content {
-                grid-template-columns: 1fr;
-            }
-            
-            .posts-list {
-                grid-column: 1;
-            }
+
+        .dialog-head h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .dialog-body { padding: 14px 16px 16px; }
+
+        .dirty input, .dirty textarea {
+            border-color: rgba(15, 118, 110, 0.55);
+            background: rgba(240, 253, 250, 0.62);
+        }
+
+        .dialog-actions {
+            display: flex;
+            gap: 10px;
+            padding: 0 16px 16px;
+            flex-wrap: wrap;
+        }
+
+        .dialog-actions .btn { flex: 1; min-width: 150px; }
+
+        @media (max-width: 880px) {
+            body { padding: 16px; }
+            .grid { grid-template-columns: 1fr; }
+            .panel--wide { grid-column: 1; }
+            .post__meta { max-width: 100%; justify-content: flex-start; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="app">
         <header>
-            <h1>📝 Posts API Frontend</h1>
+            <div class="brand">
+                <h1>Posts</h1>
+                <p>FastAPI + MongoDB. Uses Mongo <span class="pill">_id</span> for edits/deletes.</p>
+            </div>
+            <div class="top-actions">
+                <button id="refreshBtn" class="btn btn--ghost" type="button">Refresh</button>
+            </div>
         </header>
-        
-        <div class="content">
-            <!-- Create Post Section -->
-            <div class="section">
-                <h2>➕ Create Post</h2>
-                <div id="createMessage" class="message"></div>
-                <form id="createForm">
-                    <div class="form-group">
-                        <label for="createUserId">User ID:</label>
-                        <input type="number" id="createUserId" required>
+
+        <main>
+            <div class="grid">
+                <section class="panel">
+                    <h2>Create</h2>
+                    <form id="createForm">
+                        <div class="row row--2">
+                            <div>
+                                <label for="createUserId">user_id</label>
+                                <input type="number" id="createUserId" inputmode="numeric" min="0" required>
+                            </div>
+                            <div>
+                                <label for="createTitle">title</label>
+                                <input type="text" id="createTitle" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div>
+                                <label for="createBody">body</label>
+                                <textarea id="createBody" required></textarea>
+                            </div>
+                        </div>
+                        <div class="panel-actions">
+                            <button class="btn btn--primary btn--block" type="submit">Create post</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="panel">
+                    <h2>Filter</h2>
+                    <form id="filterForm">
+                        <div class="row row--2">
+                            <div>
+                                <label for="filterUserId">user_id</label>
+                                <input type="number" id="filterUserId" inputmode="numeric" min="0" placeholder="e.g. 2">
+                            </div>
+                            <div>
+                                <label for="filterTitle">title</label>
+                                <input type="text" id="filterTitle" placeholder="contains… (exact match in API for now)">
+                            </div>
+                        </div>
+                        <div class="panel-actions">
+                            <button class="btn btn--primary" type="submit">Apply</button>
+                            <button id="clearFilterBtn" class="btn btn--ghost" type="button">Clear</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="panel panel--wide">
+                    <div class="bar">
+                        <h2 style="margin: 0;">Posts</h2>
+                        <div class="count" id="postsCount">—</div>
                     </div>
-                    <div class="form-group">
-                        <label for="createTitle">Title:</label>
-                        <input type="text" id="createTitle" required>
+                    <div id="postsList" class="list">
+                        <div class="skeleton">Loading posts…</div>
                     </div>
-                    <div class="form-group">
-                        <label for="createBody">Body:</label>
-                        <textarea id="createBody" required></textarea>
-                    </div>
-                    <button type="submit">Create Post</button>
-                </form>
+                </section>
             </div>
-            
-            <!-- Filter Section -->
-            <div class="section">
-                <h2>🔍 Filter Posts</h2>
-                <div class="filter-group">
-                    <input type="number" id="filterUserId" placeholder="Filter by User ID">
-                    <input type="text" id="filterTitle" placeholder="Filter by Title">
-                    <button onclick="filterPosts()">Filter</button>
-                    <button class="clear" onclick="loadAllPosts()">Clear Filter</button>
-                </div>
-            </div>
-            
-            <!-- Posts List Section -->
-            <div class="section posts-list">
-                <h2>📋 All Posts</h2>
-                <div id="postsList" class="loading">Loading posts...</div>
-            </div>
-        </div>
+        </main>
     </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <dialog id="editDialog">
+        <div class="dialog-head">
+            <div>
+                <h3>Edit post</h3>
+                <div class="count" style="margin-top: 6px;">_id: <span id="editIdText"></span></div>
+            </div>
+            <button class="btn btn--ghost" type="button" id="editCloseBtn">Close</button>
+        </div>
+        <div class="dialog-body">
+            <form id="editForm">
+                <div class="row row--2">
+                    <div id="editUserIdWrap">
+                        <label for="editUserId">user_id</label>
+                        <input type="number" id="editUserId" inputmode="numeric" min="0" required>
+                    </div>
+                    <div id="editTitleWrap">
+                        <label for="editTitle">title</label>
+                        <input type="text" id="editTitle" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="editBodyWrap">
+                        <label for="editBody">body</label>
+                        <textarea id="editBody" required></textarea>
+                    </div>
+                </div>
+                <div class="dialog-actions">
+                    <button class="btn btn--primary" type="submit">Save changes (PATCH)</button>
+                    <button class="btn btn--ghost" type="button" id="editPutBtn">Replace (PUT)</button>
+                    <button class="btn btn--danger" type="button" id="editDeleteBtn">Delete</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
     
     <script>
         const API_URL = 'http://127.0.0.1:8000';
-        let postsData = {}; // Store post data for edit functionality
-        
-        // Load all posts on page load
-        document.addEventListener('DOMContentLoaded', loadAllPosts);
-        
-        // Create post form submission
-        document.getElementById('createForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const post = {
-                userId: parseInt(document.getElementById('createUserId').value),
-                title: document.getElementById('createTitle').value,
-                body: document.getElementById('createBody').value
-            };
-            
-            const editId = document.getElementById('createForm').dataset.editId;
-            
-            try {
-                let response;
-                if (editId) {
-                    // Update existing post
-                    response = await fetch(`${API_URL}/posts/${editId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(post)
-                    });
-                } else {
-                    // Create new post
-                    response = await fetch(`${API_URL}/posts`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(post)
-                    });
-                }
-                
-                if (response.ok) {
-                    const message = editId ? 'Post updated successfully!' : 'Post created successfully!';
-                    showMessage('createMessage', message, 'success');
-                    document.getElementById('createForm').reset();
-                    delete document.getElementById('createForm').dataset.editId;
-                    document.querySelector('#createForm button').textContent = 'Create Post';
-                    loadAllPosts();
-                } else {
-                    showMessage('createMessage', 'Failed to save post', 'error');
-                }
-            } catch (error) {
-                showMessage('createMessage', 'Error: ' + error.message, 'error');
-            }
+        const POSTS_URL = `${API_URL}/posts`;
+
+        const els = {
+            refreshBtn: document.getElementById('refreshBtn'),
+            createForm: document.getElementById('createForm'),
+            createUserId: document.getElementById('createUserId'),
+            createTitle: document.getElementById('createTitle'),
+            createBody: document.getElementById('createBody'),
+            filterForm: document.getElementById('filterForm'),
+            filterUserId: document.getElementById('filterUserId'),
+            filterTitle: document.getElementById('filterTitle'),
+            clearFilterBtn: document.getElementById('clearFilterBtn'),
+            postsList: document.getElementById('postsList'),
+            postsCount: document.getElementById('postsCount'),
+            toast: document.getElementById('toast'),
+            editDialog: document.getElementById('editDialog'),
+            editIdText: document.getElementById('editIdText'),
+            editCloseBtn: document.getElementById('editCloseBtn'),
+            editForm: document.getElementById('editForm'),
+            editUserId: document.getElementById('editUserId'),
+            editTitle: document.getElementById('editTitle'),
+            editBody: document.getElementById('editBody'),
+            editUserIdWrap: document.getElementById('editUserIdWrap'),
+            editTitleWrap: document.getElementById('editTitleWrap'),
+            editBodyWrap: document.getElementById('editBodyWrap'),
+            editPutBtn: document.getElementById('editPutBtn'),
+            editDeleteBtn: document.getElementById('editDeleteBtn'),
+        };
+
+        let postsById = {};
+        let currentQuery = { user_id: '', title: '' };
+        let editId = null;
+        let editOriginal = null;
+        let toastTimer = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            els.refreshBtn.addEventListener('click', () => loadAllPosts(currentQuery));
+            els.createForm.addEventListener('submit', onCreateSubmit);
+            els.filterForm.addEventListener('submit', onFilterSubmit);
+            els.clearFilterBtn.addEventListener('click', onClearFilter);
+            els.postsList.addEventListener('click', onPostsListClick);
+
+            els.editCloseBtn.addEventListener('click', () => els.editDialog.close());
+            els.editForm.addEventListener('submit', onEditPatchSubmit);
+            els.editPutBtn.addEventListener('click', onEditPut);
+            els.editDeleteBtn.addEventListener('click', onEditDelete);
+
+            ['input', 'change'].forEach(evt => {
+                els.editUserId.addEventListener(evt, syncDirtyState);
+                els.editTitle.addEventListener(evt, syncDirtyState);
+                els.editBody.addEventListener(evt, syncDirtyState);
+            });
+
+            loadAllPosts(currentQuery);
         });
-        
-        async function loadAllPosts() {
+
+        function showToast(message, type = 'success') {
+            if (toastTimer) clearTimeout(toastTimer);
+            els.toast.textContent = message;
+            els.toast.className = `toast is-open ${type === 'error' ? 'is-error' : 'is-success'}`;
+            toastTimer = setTimeout(() => {
+                els.toast.className = 'toast';
+                toastTimer = null;
+            }, 3200);
+        }
+
+        async function requestJson(url, options = {}) {
+            const response = await fetch(url, options);
+            const text = await response.text();
+            let data = null;
+            try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+            return { ok: response.ok, status: response.status, data };
+        }
+
+        function buildPostsUrl(query) {
+            const params = new URLSearchParams();
+            if (query.user_id !== '' && query.user_id !== null && query.user_id !== undefined) {
+                params.set('user_id', String(query.user_id));
+            }
+            if (query.title) params.set('title', query.title);
+            const qs = params.toString();
+            return qs ? `${POSTS_URL}?${qs}` : POSTS_URL;
+        }
+
+        function setLoading(message = 'Loading posts…') {
+            els.postsList.replaceChildren(Object.assign(document.createElement('div'), { className: 'skeleton', textContent: message }));
+        }
+
+        async function loadAllPosts(query = { user_id: '', title: '' }) {
+            currentQuery = { ...query };
+            setLoading();
             try {
-                const response = await fetch(`${API_URL}/posts`);
-                const posts = await response.json();
-                postsData = {}; // Clear previous data
-                posts.forEach(post => {
-                    postsData[post._id] = post;
-                });
-                displayPosts(posts);
+                const url = buildPostsUrl(currentQuery);
+                const { ok, data } = await requestJson(url);
+                if (!ok) throw new Error((data && data.message) || 'Failed to load posts');
+                renderPosts(Array.isArray(data) ? data : []);
             } catch (error) {
-                document.getElementById('postsList').innerHTML = '<p style="color: red;">Error loading posts</p>';
+                els.postsList.replaceChildren(Object.assign(document.createElement('div'), { className: 'skeleton', textContent: `Error: ${error.message}` }));
+                els.postsCount.textContent = '—';
+                showToast(error.message, 'error');
             }
         }
-        
-        async function filterPosts() {
-            const userId = document.getElementById('filterUserId').value;
-            const title = document.getElementById('filterTitle').value;
-            
-            try {
-                let url = `${API_URL}/posts?`;
-                if (userId) url += `userId=${userId}`;
-                if (userId && title) url += '&';
-                if (title) url += `title=${title}`;
-                
-                const response = await fetch(url);
-                const posts = await response.json();
-                postsData = {}; // Clear previous data
-                posts.forEach(post => {
-                    postsData[post._id] = post;
-                });
-                displayPosts(posts);
-            } catch (error) {
-                document.getElementById('postsList').innerHTML = '<p style="color: red;">Error filtering posts</p>';
-            }
-        }
-        
-        function displayPosts(posts) {
-            const postsList = document.getElementById('postsList');
-            
-            if (posts.length === 0) {
-                postsList.innerHTML = '<p style="color: #999;">No posts found</p>';
+
+        async function onCreateSubmit(e) {
+            e.preventDefault();
+
+            const user_id = Number.parseInt(els.createUserId.value, 10);
+            if (!Number.isFinite(user_id)) {
+                showToast('user_id must be a number', 'error');
                 return;
             }
-            
-            postsList.innerHTML = posts.map(post => `
-                <div class="post-item">
-                    <h3>${post.title}</h3>
-                    <div class="post-meta">User: ${post.userId}</div>
-                    <div class="post-body">${post.body}</div>
-                    <div class="post-actions">
-                        <button class="update" data-post-id="${post._id}" onclick="editPost(this.dataset.postId)">Edit</button>
-                        <button class="delete" data-post-id="${post._id}" onclick="deletePost(this.dataset.postId)">Delete</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        async function deletePost(postId) {
-            if (!confirm('Are you sure you want to delete this post?')) return;
-            
+
+            const payload = {
+                user_id,
+                title: els.createTitle.value.trim(),
+                body: els.createBody.value.trim(),
+            };
+
+            if (!payload.title || !payload.body) {
+                showToast('title and body are required', 'error');
+                return;
+            }
+
             try {
-                const response = await fetch(`${API_URL}/posts/${postId}`, {
-                    method: 'DELETE'
+                const { ok, data } = await requestJson(POSTS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
                 });
-                
-                if (response.ok) {
-                    loadAllPosts();
-                } else {
-                    alert('Failed to delete post');
-                }
+                if (!ok) throw new Error((data && data.message) || 'Create failed');
+                els.createForm.reset();
+                showToast('Post created', 'success');
+                loadAllPosts(currentQuery);
             } catch (error) {
-                alert('Error: ' + error.message);
+                showToast(error.message, 'error');
             }
         }
-        
-        function editPost(postId) {
-            const post = postsData[postId];
+
+        async function onFilterSubmit(e) {
+            e.preventDefault();
+            const userIdRaw = els.filterUserId.value.trim();
+            const user_id = userIdRaw === '' ? '' : Number.parseInt(userIdRaw, 10);
+            const title = els.filterTitle.value.trim();
+
+            if (userIdRaw !== '' && !Number.isFinite(user_id)) {
+                showToast('user_id must be a number', 'error');
+                return;
+            }
+
+            loadAllPosts({ user_id: userIdRaw === '' ? '' : user_id, title });
+        }
+
+        function onClearFilter() {
+            els.filterUserId.value = '';
+            els.filterTitle.value = '';
+            loadAllPosts({ user_id: '', title: '' });
+        }
+
+        function onPostsListClick(e) {
+            const btn = e.target.closest('[data-action]');
+            if (!btn) return;
+            const postId = btn.dataset.id;
+            const action = btn.dataset.action;
+            if (!postId) return;
+
+            if (action === 'edit') openEdit(postId);
+            if (action === 'delete') deletePost(postId);
+            if (action === 'copy') copyId(postId);
+        }
+
+        async function copyId(postId) {
+            try {
+                await navigator.clipboard.writeText(postId);
+                showToast('Copied _id to clipboard', 'success');
+            } catch {
+                showToast('Clipboard copy failed', 'error');
+            }
+        }
+
+        function renderPosts(posts) {
+            postsById = {};
+            els.postsCount.textContent = `${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`;
+
+            if (!posts.length) {
+                els.postsList.replaceChildren(Object.assign(document.createElement('div'), { className: 'skeleton', textContent: 'No posts found.' }));
+                return;
+            }
+
+            const frag = document.createDocumentFragment();
+            for (const post of posts) {
+                if (!post || !post._id) continue;
+                postsById[post._id] = post;
+
+                const card = document.createElement('article');
+                card.className = 'post';
+
+                const head = document.createElement('div');
+                head.className = 'post__head';
+
+                const title = document.createElement('h3');
+                title.className = 'post__title';
+                title.textContent = String(post.title ?? '');
+
+                const meta = document.createElement('div');
+                meta.className = 'post__meta';
+
+                const userPill = document.createElement('span');
+                userPill.className = 'pill';
+                userPill.textContent = `user_id: ${post.user_id ?? '—'}`;
+
+                const copyPill = document.createElement('button');
+                copyPill.type = 'button';
+                copyPill.className = 'pill pill--click';
+                copyPill.dataset.action = 'copy';
+                copyPill.dataset.id = post._id;
+                copyPill.textContent = 'copy _id';
+
+                meta.append(userPill, copyPill);
+                head.append(title, meta);
+
+                const body = document.createElement('div');
+                body.className = 'post__body';
+                body.textContent = String(post.body ?? '');
+
+                const actions = document.createElement('div');
+                actions.className = 'post__actions';
+
+                const editBtn = document.createElement('button');
+                editBtn.type = 'button';
+                editBtn.className = 'btn btn--ghost';
+                editBtn.dataset.action = 'edit';
+                editBtn.dataset.id = post._id;
+                editBtn.textContent = 'Edit';
+
+                const delBtn = document.createElement('button');
+                delBtn.type = 'button';
+                delBtn.className = 'btn btn--danger';
+                delBtn.dataset.action = 'delete';
+                delBtn.dataset.id = post._id;
+                delBtn.textContent = 'Delete';
+
+                actions.append(editBtn, delBtn);
+                card.append(head, body, actions);
+                frag.append(card);
+            }
+
+            els.postsList.replaceChildren(frag);
+        }
+
+        function openEdit(postId) {
+            const post = postsById[postId];
             if (!post) {
-                alert('Post data not found');
+                showToast('Post not found in UI cache. Refreshing…', 'error');
+                loadAllPosts(currentQuery);
                 return;
             }
-            
-            document.getElementById('createUserId').value = post.userId;
-            document.getElementById('createTitle').value = post.title;
-            document.getElementById('createBody').value = post.body;
-            document.getElementById('createForm').dataset.editId = postId;
-            document.querySelector('#createForm button').textContent = 'Update Post';
-            document.querySelector('.section').scrollIntoView({ behavior: 'smooth' });
+
+            editId = postId;
+            editOriginal = {
+                user_id: post.user_id,
+                title: String(post.title ?? ''),
+                body: String(post.body ?? ''),
+            };
+
+            els.editIdText.textContent = postId;
+            els.editUserId.value = String(editOriginal.user_id ?? '');
+            els.editTitle.value = editOriginal.title;
+            els.editBody.value = editOriginal.body;
+            syncDirtyState();
+
+            els.editDialog.showModal();
+            els.editTitle.focus();
         }
-        
-        function showMessage(elementId, message, type) {
-            const messageEl = document.getElementById(elementId);
-            messageEl.textContent = message;
-            messageEl.className = `message ${type}`;
-            setTimeout(() => {
-                messageEl.className = 'message';
-            }, 3000);
+
+        function getEditPayload() {
+            const user_id = Number.parseInt(els.editUserId.value, 10);
+            const title = els.editTitle.value.trim();
+            const body = els.editBody.value.trim();
+            if (!Number.isFinite(user_id)) throw new Error('user_id must be a number');
+            if (!title || !body) throw new Error('title and body are required');
+            return { user_id, title, body };
+        }
+
+        function diffPayload(original, current) {
+            const changes = {};
+            if (original.user_id !== current.user_id) changes.user_id = current.user_id;
+            if (original.title !== current.title) changes.title = current.title;
+            if (original.body !== current.body) changes.body = current.body;
+            return changes;
+        }
+
+        function syncDirtyState() {
+            if (!editOriginal) return;
+            let current;
+            try {
+                current = getEditPayload();
+            } catch {
+                // Still highlight fields as the user types; validation is handled on submit.
+                current = {
+                    user_id: Number.parseInt(els.editUserId.value, 10),
+                    title: els.editTitle.value,
+                    body: els.editBody.value,
+                };
+            }
+
+            const changes = diffPayload(editOriginal, current);
+            els.editUserIdWrap.classList.toggle('dirty', 'user_id' in changes);
+            els.editTitleWrap.classList.toggle('dirty', 'title' in changes);
+            els.editBodyWrap.classList.toggle('dirty', 'body' in changes);
+        }
+
+        async function onEditPatchSubmit(e) {
+            e.preventDefault();
+            if (!editId || !editOriginal) return;
+
+            let current;
+            try {
+                current = getEditPayload();
+            } catch (error) {
+                showToast(error.message, 'error');
+                return;
+            }
+
+            const changes = diffPayload(editOriginal, current);
+            if (Object.keys(changes).length === 0) {
+                showToast('No changes to save', 'error');
+                return;
+            }
+
+            try {
+                const { ok, data } = await requestJson(`${POSTS_URL}/${editId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(changes),
+                });
+                if (!ok) throw new Error((data && data.message) || 'Update failed');
+                els.editDialog.close();
+                showToast('Post updated', 'success');
+                loadAllPosts(currentQuery);
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function onEditPut() {
+            if (!editId) return;
+            let payload;
+            try {
+                payload = getEditPayload();
+            } catch (error) {
+                showToast(error.message, 'error');
+                return;
+            }
+
+            try {
+                const { ok, data } = await requestJson(`${POSTS_URL}/${editId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+                if (!ok) throw new Error((data && data.message) || 'Replace failed');
+                els.editDialog.close();
+                showToast('Post replaced', 'success');
+                loadAllPosts(currentQuery);
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function deletePost(postId) {
+            if (!confirm('Delete this post?')) return;
+            try {
+                const { ok, data } = await requestJson(`${POSTS_URL}/${postId}`, { method: 'DELETE' });
+                if (!ok) throw new Error((data && data.message) || 'Delete failed');
+                showToast('Post deleted', 'success');
+                loadAllPosts(currentQuery);
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function onEditDelete() {
+            if (!editId) return;
+            if (!confirm('Delete this post? This cannot be undone.')) return;
+            try {
+                const { ok, data } = await requestJson(`${POSTS_URL}/${editId}`, { method: 'DELETE' });
+                if (!ok) throw new Error((data && data.message) || 'Delete failed');
+                els.editDialog.close();
+                showToast('Post deleted', 'success');
+                loadAllPosts(currentQuery);
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
         }
     </script>
 </body>
