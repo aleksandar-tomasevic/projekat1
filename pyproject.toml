@@ -18,6 +18,8 @@ dependencies = [
 
 [tool.poetry]
 name = "projekat1"
+version = "0.1.0"
+authors = ["Your Name <you@example.com>"]
 packages = [{ include = "projekat1", from = "src" }]
 
 
