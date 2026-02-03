@@ -25,10 +25,10 @@ EXPOSE 8000
 CMD ["uvicorn", "projekat1.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 
-# 1. MongoDB (koristi zvanični image, bez Dockerfile-a)
+# command for running the MongoDB container
 #docker run -d --name mongo -p 27018:27017 -v mongo_data:/data/db mongo:7
 
-# 2. Tvoja aplikacija (koristi tvoj Dockerfile)
+# Command for runnig the FastAPI app container
 #docker run -d --name myapi -p 8000:8000 \
 #  --add-host=host.docker.internal:host-gateway \
 #  -e MONGO_URI=mongodb://host.docker.internal:27018 \
