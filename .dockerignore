@@ -12,5 +12,4 @@ ENV/
 .vscode/
 *.log
 *.md
-index.html
 src/old/
